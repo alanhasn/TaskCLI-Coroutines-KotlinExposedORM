@@ -1,0 +1,14 @@
+# Ensure all text files use LF line endings
+* text=auto eol=lf
+
+# Set UTF-8 encoding
+*.kt text eol=lf charset=utf-8
+*.java text eol=lf charset=utf-8
+*.md text eol=lf charset=utf-8
+
+# Treat Kotlin files as source code
+*.kt linguist-language=Kotlin
+
+# Keep Gradle wrapper scripts executable
+gradlew text eol=lf
+gradlew.bat text eol=crlf

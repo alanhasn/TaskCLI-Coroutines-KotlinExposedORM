@@ -5,7 +5,6 @@ import services.TaskService
 
 object ConsoleUI {
 
-    // Show the menu options to the user
     private fun menu() {
         println(
             """
@@ -22,74 +21,88 @@ object ConsoleUI {
         print("Choose an option: ")
     }
 
-    // Handle the user's input and call the appropriate service functions
+    // Safe input for Int with retry
+    private fun readInt(prompt: String): Int {
+        while (true) {
+            print(prompt)
+            val input = readln().trim()
+            val number = input.toIntOrNull()
+            if (number != null) return number
+            println("❌ Please enter a valid number.")
+        }
+    }
+
+    // Safe input for Boolean with retry
+    private fun readBoolean(prompt: String): Boolean {
+        while (true) {
+            print(prompt)
+            val input = readln().trim()
+            when (input.lowercase()) {
+                "true" -> return true
+                "false" -> return false
+                else -> println("❌ Please enter 'true' or 'false'.")
+            }
+        }
+    }
+
+    // General input for non-empty strings
+    private fun readText(prompt: String): String {
+        while (true) {
+            print(prompt)
+            val input = readln().trim()
+            if (input.isNotEmpty()) return input
+            println("❌ Input cannot be empty.")
+        }
+    }
+
     private fun conditions() = runBlocking {
         var isRunning = true
 
         while (isRunning) {
             menu()
-            when (readlnOrNull()?.trim()) {
+            val choice = readln().trim()
+
+            when (choice) {
                 "1" -> {
-                    println("➤ Enter task title:")
-                    val title = readlnOrNull()?.trim() ?: ""
-                    println("➤ Enter task description:")
-                    val desc = readlnOrNull()?.trim() ?: ""
-                    TaskService.addTask(title, desc)
+                    val title = readText("➤ Enter task title: ")
+                    val description = readText("➤ Enter task description: ")
+                    TaskService.addTask(title, description)
                 }
 
-                "2" -> {
-                    println()
-                    TaskService.showAllTasks()
-                }
+                "2" -> TaskService.showAllTasks()
 
                 "3" -> {
-                    println("➤ Enter task ID:")
-                    val id = readlnOrNull()?.toIntOrNull() ?: -1
+                    val id = readInt("➤ Enter task ID: ")
                     TaskService.getTaskByID(id)
                 }
 
                 "4" -> {
-                    println("➤ Enter task ID to update:")
-                    val id = readlnOrNull()?.toIntOrNull() ?: -1
-
-                    println("➤ New title:")
-                    val newTitle = readlnOrNull()?.trim() ?: ""
-
-                    println("➤ New description:")
-                    val newDesc = readlnOrNull()?.trim() ?: ""
-
-                    println("➤ Is completed? (true/false):")
-                    val isCompleted = readlnOrNull()?.toBooleanStrictOrNull() ?: false
-
-                    TaskService.updateTask(id, newTitle, newDesc, isCompleted)
+                    val id = readInt("➤ Enter task ID to update: ")
+                    val newTitle = readText("➤ New title: ")
+                    val newDescription = readText("➤ New description: ")
+                    val isCompleted = readBoolean("➤ Is completed? (true/false): ")
+                    TaskService.updateTask(id, newTitle, newDescription, isCompleted)
                 }
 
                 "5" -> {
-                    println("➤ Enter task ID to delete:")
-                    val id = readlnOrNull()?.toIntOrNull() ?: -1
+                    val id = readInt("➤ Enter task ID to delete: ")
                     TaskService.deleteTask(id)
                 }
 
-                "6" -> {
-                    TaskService.getIncompleteTasks()
-                }
+                "6" -> TaskService.getIncompleteTasks()
 
                 "0" -> {
                     println("👋 Exiting the program. Goodbye!")
                     isRunning = false
                 }
 
-                else -> {
-                    println("❌ Invalid option. Please try again.")
-                }
+                else -> println("❌ Invalid option. Please try again.")
             }
 
-            // Add a line between operations for better readability
             println("\n-------------------------\n")
         }
     }
 
-    // Start the CLI interface
     fun start() {
         println("🚀 Welcome to Kotlin Task Manager CLI!")
         conditions()

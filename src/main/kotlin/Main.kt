@@ -7,6 +7,7 @@ fun main()  {
     DatabaseFactory.init() // Connect to the database
     Schema.createTables() // Create Tables
 
+    // Start the UI interface
     ConsoleUI.start()
 
 }
