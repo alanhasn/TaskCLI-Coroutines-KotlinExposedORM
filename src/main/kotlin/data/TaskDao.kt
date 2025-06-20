@@ -13,13 +13,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object TaskDao {
 
     // INSERT: Create a new task in the database
-    suspend fun insertTask(title: String, description: String) = withContext(Dispatchers.IO) {
+    suspend fun insertTask(title: String, description: String): Boolean = withContext(Dispatchers.IO) {
         transaction {
             Tasks.insert {
                 it[Tasks.title] = title
                 it[Tasks.description] = description
                 it[Tasks.isCompleted] = false
-            }
+            }.insertedCount > 0 // return true if row was inserted
         }
     }
 
