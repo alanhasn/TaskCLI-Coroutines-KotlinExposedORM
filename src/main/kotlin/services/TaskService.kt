@@ -29,7 +29,7 @@ object TaskService {
         if (allTasks.isEmpty()) {
             println("There are no tasks to show.")
         } else {
-            println("All Tasks:")
+            println("======= All Tasks =====")
             for (task in allTasks) {
                 println(
                         "ID: ${task.id}\n" +
